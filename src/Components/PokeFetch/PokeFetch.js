@@ -9,18 +9,17 @@ class PokeFetch extends Component {
       pokeInfo: '',
       pokeSprite: '',
       pokeName: '',
-
     }
-    //timer should go here probably, or maybe below the next } but definitely before the fetch()
   }
 
   fetchPokemon() {
-    setState{
-      clockOn: true
-    }
+    this.setState (
+     {timerRunning: true}
+    )
     let min = Math.ceil(1);
     let max = Math.floor(152);
     let pokeNum = Math.floor(Math.random() * (max - min) + min);
+    
     fetch(`https://pokeapi.co/api/v2/pokemon/${pokeNum}`, {
       method: 'GET'
     }).then(res => res.json())
@@ -34,15 +33,15 @@ class PokeFetch extends Component {
       .catch((err) => console.log(err))
   }
   //Timer
- timer = () => {
-    if (this.state.clock > 0) {
+ tick = () => {
+    if (this.state.timer > 0) {
       this.setState(
-        {clock: this.state.clock -1}
+        {timer: this.state.timer -1}
       )
     } else {
       clearInterval();
         this.setState(
-          {clockOn: false }
+          {timerRunning: false }
         )
     }
   } 
@@ -50,21 +49,19 @@ class PokeFetch extends Component {
   
   
   //Lifecycle method
-  componentDidUpdate () { //Lifecycle method here checking that the timer ahs updated before proceeding down
-    setInterval(() => {this.timer()}, 1000)//10000 ms = 10 s 
+  componentDidUpdate () { 
+    setInterval(() => {this.timer()}, 1000)
   }
   
   render() {
     return (
       <div className={'wrapper'}>
-        <button className={'start'} onClick={() => this.fetchPokemon()}>Start!</button>
-        <h1 className={'timer'} >Timer Display {this.state.clockOn ? this.state.clock : null} </h1>
+        <button className={'start'} onClick={() => this.fetchPokemon()}>Gotta catch 'em all!</button>
+        <h1 className={'timer'} >Timer Display {this.state.timerRunning ? this.state.timer : null} </h1>
         
         <div className={'pokeWrap'}>
-          {this.state.clockOn ? <img className={'pokeImg'} src={this.state.pokeSprite} />
-          //I think there are a few ways to do this, but my best option looks like it is likely to filter with CSS and toggle that on / off w/ onClic.. 
-          <h1 className={'pokeName'}>{this.state.pokeName}</h1>
-        </div>
+          <h1 className={'pokeName'}>{!this.state.timerRunning ? this.state.pokeName : this.state.timer === 0 ? this.pokeName : null}</h1>
+        </div>}
       </div>
     )
   }
